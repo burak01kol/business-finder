@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ İşletme Bulucu v2.0 - Zenginleştirilmiş Kategori Sistemi</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-map-marked-alt"></i>
+                İşletme Bulucu
+                <span class="version-badge">v2.0</span>
+            </h1>
+            <p>Zenginleştirilmiş kategori sistemi ile 50+ farklı işletme türünde arama yapın</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Sol Panel: Arama -->
+            <div class="search-panel">
+                <form class="search-form" id="searchForm">
+                    <div class="form-group">
+                        <label for="location">
+                            <i class="fas fa-map-marker-alt"></i> Konum
+                        </label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            name="location" 
+                            placeholder="Şehir, semt veya tam adres girin..."
+                            required
+                            autocomplete="address-line1"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">
+                            <i class="fas fa-tags"></i> Kategori
+                        </label>
+                        <input 
+                            type="text" 
+                            id="category" 
+                            name="category" 
+                            placeholder="örn: yazılım, kafe, eczane, avukat..."
+                            required
+                            list="category-suggestions"
+                        >
+                        <datalist id="category-suggestions">
+                            <option value="yazılım">
+                            <option value="software">
+                            <option value="kafe">
+                            <option value="cafe">
+                            <option value="eczane">
+                            <option value="pharmacy">
+                            <option value="market">
+                            <option value="banka">
+                            <option value="restoran">
+                            <option value="hastane">
+                            <option value="okul">
+                            <option value="kuaför">
+                            <option value="gym">
+                            <option value="hotel">
+                            <option value="benzinlik">
+                            <option value="avukat">
+                            <option value="muhasebe">
+                        </datalist>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="radius">
+                            <i class="fas fa-expand-arrows-alt"></i> Arama Yarıçapı
+                        </label>
+                        <select id="radius" name="radius">
+                            <option value="1000">1 km</option>
+                            <option value="2000">2 km</option>
+                            <option value="5000" selected>5 km (Önerilen)</option>
+                            <option value="10000">10 km</option>
+                            <option value="15000">15 km</option>
+                            <option value="20000">20 km</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                        İşletmeleri Ara
+                    </button>
+                </form>
+
+                <!-- Hızlı Kategoriler -->
+                <div class="quick-categories">
+                    <h3>
+                        <i class="fas fa-bolt"></i> 
+                        Popüler Kategoriler
+                    </h3>
+                    <div class="category-grid">
+                        <div class="category-btn" data-category="yazılım" data-icon="💻">
+                            💻 Yazılım Şirketi
+                        </div>
+                        <div class="category-btn" data-category="kafe" data-icon="☕">
+                            ☕ Kafe
+                        </div>
+                        <div class="category-btn" data-category="eczane" data-icon="💊">
+                            💊 Eczane
+                        </div>
+                        <div class="category-btn" data-category="market" data-icon="🛒">
+                            🛒 Market
+                        </div>
+                        <div class="category-btn" data-category="banka" data-icon="🏦">
+                            🏦 Banka
+                        </div>
+                        <div class="category-btn" data-category="restoran" data-icon="🍽️">
+                            🍽️ Restoran
+                        </div>
+                        <div class="category-btn" data-category="hastane" data-icon="🏥">
+                            🏥 Hastane
+                        </div>
+                        <div class="category-btn" data-category="okul" data-icon="🎓">
+                            🎓 Okul
+                        </div>
+                        <div class="category-btn" data-category="kuaför" data-icon="✂️">
+                            ✂️ Kuaför
+                        </div>
+                        <div class="category-btn" data-category="gym" data-icon="🏋️">
+                            🏋️ Spor Salonu
+                        </div>
+                        <div class="category-btn" data-category="benzinlik" data-icon="⛽">
+                            ⛽ Benzinlik
+                        </div>
+                        <div class="category-btn" data-category="avukat" data-icon="⚖️">
+                            ⚖️ Avukat
+                        </div>
+                    </div>
+                    
+                    <div class="suggestions-box">
+                        <h5><i class="fas fa-lightbulb"></i> İpuçları</h5>
+                        <small>
+                            🔸 Daha iyi sonuçlar için İngilizce deneyin: "software", "cafe", "pharmacy"<br>
+                            🔸 Büyük şehir merkezlerinde daha fazla sonuç bulabilirsiniz<br>
+                            🔸 Yarıçapı artırarak daha geniş alanda arama yapabilirsiniz
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Gelişmiş Seçenekler -->
+                <div class="advanced-options">
+                    <h4><i class="fas fa-cog"></i> Gelişmiş Seçenekler</h4>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="englishSearch">
+                            <label for="englishSearch">Otomatik İngilizce çeviri</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="extendedSearch">
+                            <label for="extendedSearch">Genişletilmiş arama (daha fazla sonuç)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İstatistikler -->
+                <div class="stats-section" id="statsSection" style="display: none;">
+                    <h4><i class="fas fa-chart-bar"></i> Arama İstatistikleri</h4>
+                    <div id="statsContent"></div>
+                </div>
+            </div>
+
+            <!-- Sağ Panel: Sonuçlar -->
+            <div class="results-section">
+                <div class="results-header">
+                    <h2 id="resultsTitle">
+                        <i class="fas fa-list"></i> 
+                        Arama yapmak için sol paneli kullanın
+                    </h2>
+                    <div id="resultsInfo"></div>
+                </div>
+
+                <div class="results-content">
+                    <!-- Harita -->
+                    <div id="map"></div>
+
+                    <!-- İşletme Listesi -->
+                    <div class="businesses-list" id="businessesList">
+                        <div class="loading" style="display: none;" id="loadingDiv">
+                            <div class="spinner"></div>
+                            <p><strong>İşletmeler aranıyor...</strong></p>
+                            <small>Zenginleştirilmiş kategori sistemi ile taranıyor</small>
+                        </div>
+                        
+                        <div class="status-info" style="text-align: center;">
+                            <h4>🎯 Gelişmiş Arama Sistemi</h4>
+                            <p>50+ farklı kategori desteği ile daha kapsamlı sonuçlar</p>
+                            <ul style="text-align: left; margin-top: 15px;">
+                                <li><strong>Teknoloji:</strong> yazılım, software, bilişim, IT</li>
+                                <li><strong>Sağlık:</strong> eczane, hastane, doktor, klinik</li>
+                                <li><strong>Yiyecek:</strong> kafe, restoran, fast food</li>
+                                <li><strong>Hizmetler:</strong> kuaför, berber, temizlik, tamir</li>
+                                <li><strong>Hukuk:</strong> avukat, noter, muhasebe</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
